@@ -2,6 +2,7 @@ import torch.optim as optim
 import torch.utils.data
 import torch.backends.cudnn as cudnn
 import torchvision
+from torch import nn
 from torchvision import transforms as transforms
 import numpy as np
 
@@ -9,9 +10,9 @@ import argparse
 
 from tqdm import trange
 
-from models.LSTM import LSTM
-from models.QTCN import QTCN
-from models.TCN import TCN
+from QTCN.models.LSTM import LSTM
+from QTCN.models.QTCN import QTCN
+from QTCN.models.TCN import TCN
 from apex.fp16_utils import *
 
 def main():
@@ -27,6 +28,7 @@ def main():
     parser.add_argument('--dropout', default=0, type=float, help="dropout to use")
     parser.add_argument('--dataset', default="CIFAR10", type=str, choices=["CIFAR10", "CIFAR100"], help="What dataset to use")
     parser.add_argument('--parallel', default=False, action='store_true', help="activate data parallel")
+    parser.add_argument('--dropconnect', default=0, type=float, help="dropconnect to use, not really tested")
     args = parser.parse_args()
 
     solver = Solver(args)
@@ -222,9 +224,10 @@ class Solver(object):
         self.load_model()
         accuracy = 0
         for epoch in range(1, self.epochs + 1):
-            self.scheduler.step(epoch)
+            
             print("\n===> epoch: %d/200" % epoch)
             train_result = self.train()
+            self.scheduler.step(epoch)
             print(train_result)
             test_result = self.test()
             accuracy = max(accuracy, test_result[1])

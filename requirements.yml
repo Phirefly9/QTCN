@@ -1,0 +1,11 @@
+name: qtcn
+channels:
+  - pytorch
+  - defaults
+  - conda-forge
+dependencies:
+  - python
+  - pytorch
+  - torchvision
+  - numpy
+  - tqdm

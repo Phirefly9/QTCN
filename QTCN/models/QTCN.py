@@ -1,7 +1,6 @@
 import torch.nn.functional as F
 from torch import nn
-from TCN.qtcn import QTemporalConvNet, QTemporalConvNet2
-from TCN.quaternion_layers import QuaternionLinear
+from QTCN.qtcn.qtcn import QTemporalConvNet
 
 class QTCN(nn.Module):
     def __init__(self, input_size, output_size, num_channels, kernel_size, dropout):
@@ -12,9 +11,6 @@ class QTCN(nn.Module):
     def forward(self, inputs):
         """Inputs have to have dimension (N, C_in, L_in)"""
         
-        y1 = self.tcn(inputs)  # input dimension (N, C_in, L_in), output (n, num_chan[-1], L_in) 
-        #print(y1.shape)
-        
-        #print(tmp.shape)
+        y1 = self.tcn(inputs)  # input dimension (N, C_in, L_in), output (n, num_chan[-1], L_in)
         o = self.linear(y1[:, :, -1]) # input dimension (N, num_chan[-1], L_in), output (n, C_out[-1]) 
         return F.log_softmax(o, dim=1)

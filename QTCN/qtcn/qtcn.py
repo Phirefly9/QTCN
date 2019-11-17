@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
-from TCN.quaternion_layers import QuaternionConv
-from TCN.tcn import TemporalBlock
+from QTCN.qtcn.quaternion_layers import QuaternionConv
+from QTCN.tcn.tcn import TemporalBlock
 from torch.nn.utils.weight_norm import WeightNorm
 
 class QChomp1d(nn.Module):
@@ -19,7 +19,7 @@ class QTemporalBlock(nn.Module):
         super(QTemporalBlock, self).__init__()
         
         self.conv1 = QuaternionConv(n_inputs, n_outputs, kernel_size,
-                                           stride=stride, padding=padding, dilation=dilation, operation='convolution1d', bias=True)
+                                           stride=stride, padding=padding, dilatation=dilation, operation='convolution1d', bias=True)
         
         WeightNorm.apply(self.conv1, "r_weight", 0)
         WeightNorm.apply(self.conv1, "i_weight", 0)
@@ -31,7 +31,7 @@ class QTemporalBlock(nn.Module):
         self.dropout1 = nn.Dropout(dropout)
  
         self.conv2 = QuaternionConv(n_outputs, n_outputs, kernel_size,
-                                           stride=stride, padding=padding, dilation=dilation, operation='convolution1d', bias=True)
+                                           stride=stride, padding=padding, dilatation=dilation, operation='convolution1d', bias=True)
         
         WeightNorm.apply(self.conv2, "r_weight", 0)
         WeightNorm.apply(self.conv2, "i_weight", 0)
